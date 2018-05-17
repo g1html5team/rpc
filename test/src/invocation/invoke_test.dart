@@ -454,22 +454,6 @@ main() async {
       expect(result, {'anInt': '2147483648'});
     });
 
-    test('invalid-int64', () async {
-      HttpApiResponse response =
-          await _sendRequest('GET', 'get/int64/0x8000000000000000');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
-      expect(
-          response.exception.toString(),
-          'RPC Error with status: 500 and message: Integer return value: '
-          '\'9223372036854775808\' not within the \'int64\' property range.');
-      response = await _sendRequest('GET', 'get/int64/-0x8000000000000001');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
-      expect(
-          response.exception.toString(),
-          'RPC Error with status: 500 and message: Integer return value: '
-          '\'-9223372036854775809\' not within the \'int64\' property range.');
-    });
-
     test('get-response', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/response');
       expect(response.status, HttpStatus.FOUND);

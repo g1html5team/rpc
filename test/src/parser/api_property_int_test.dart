@@ -41,20 +41,6 @@ class CorrectInt {
       defaultValue: 0xFFFFFFFF)
   int aBoundedUInt32;
 
-  @ApiProperty(
-      format: 'int64',
-      minValue: -0x8000000000000000, // -2^63
-      maxValue: 0x7FFFFFFFFFFFFFFF, // 2^63-1,
-      defaultValue: -0x8000000000000000)
-  int aBoundedInt64;
-
-  @ApiProperty(
-      format: 'uint64',
-      minValue: 0,
-      maxValue: 0xFFFFFFFFFFFFFFFF, // 2^64-1,
-      defaultValue: 0xFFFFFFFFFFFFFFFF)
-  int aBoundedUInt64;
-
   @ApiProperty(ignore: true)
   int ignored;
 }
@@ -127,62 +113,6 @@ class WrongInt {
       maxValue: 0xFFFFFFFF, // 2^32-1,
       defaultValue: -1)
   int anUInt32TooSmallDefault;
-
-  @ApiProperty(
-      format: 'int64',
-      minValue: -0x8000000000000001, // -2^63-1
-      maxValue: 0x7FFFFFFFFFFFFFFF, // 2^63-1,
-      defaultValue: 0x7FFFFFFFFFFFFFFF)
-  int anInt64TooSmallMin;
-
-  @ApiProperty(
-      format: 'int64',
-      minValue: -0x8000000000000000, // -2^63
-      maxValue: 0x8000000000000000, // 2^63,
-      defaultValue: 0x7FFFFFFFFFFFFFFF)
-  int anInt64TooLargeMax;
-
-  @ApiProperty(
-      format: 'int64',
-      minValue: -0x8000000000000000, // -2^63
-      maxValue: 0x7FFFFFFFFFFFFFFF, // 2^63-1,
-      defaultValue: 0x8000000000000000)
-  int anInt64TooLargeDefault;
-
-  @ApiProperty(
-      format: 'int64',
-      minValue: -0x8000000000000000, // -2^63
-      maxValue: 0x7FFFFFFFFFFFFFFF, // 2^63-1,
-      defaultValue: -0x8000000000000001)
-  int anInt64TooSmallDefault;
-
-  @ApiProperty(
-      format: 'uint64',
-      minValue: -1,
-      maxValue: 0xFFFFFFFFFFFFFFFF, // 2^64-1,
-      defaultValue: 0xFFFFFFFFFFFFFFFF)
-  int anUInt64TooSmallMin;
-
-  @ApiProperty(
-      format: 'uint64',
-      minValue: 0,
-      maxValue: 0x10000000000000000, // 2^64,
-      defaultValue: 0xFFFFFFFFFFFFFFFF)
-  int anUInt64TooLargeMax;
-
-  @ApiProperty(
-      format: 'uint64',
-      minValue: 0,
-      maxValue: 0xFFFFFFFFFFFFFFFF, // 2^64-1,
-      defaultValue: 0x10000000000000000) // 2^64
-  int anUInt64TooLargeDefault;
-
-  @ApiProperty(
-      format: 'uint64',
-      minValue: 0,
-      maxValue: 0xFFFFFFFFFFFFFFFF, // 2^64-1,
-      defaultValue: -1)
-  int anUInt64TooSmallDefault;
 }
 
 final ApiConfigSchema jsonSchema =
@@ -239,20 +169,6 @@ void main() {
             'minimum': '0',
             'maximum': '4294967295'
           },
-          'aBoundedInt64': {
-            'type': 'string',
-            'default': '-9223372036854775808',
-            'format': 'int64',
-            'minimum': '-9223372036854775808',
-            'maximum': '9223372036854775807'
-          },
-          'aBoundedUInt64': {
-            'type': 'string',
-            'default': '18446744073709551615',
-            'format': 'uint64',
-            'minimum': '0',
-            'maximum': '18446744073709551615'
-          }
         }
       };
       expect(json, expectedJson);
@@ -301,26 +217,6 @@ void main() {
         new ApiConfigError(
             'WrongInt: anUInt32TooSmallDefault: Default value: \'-1\' not in '
             'the range of an \'uint32\''),
-        new ApiConfigError(
-            'WrongInt: anInt64TooSmallMin: Min value: \'-9223372036854775809\' '
-            'not in the range of an \'int64\''),
-        new ApiConfigError(
-            'WrongInt: anInt64TooLargeMax: Max value: \'9223372036854775808\' '
-            'not in the range of an \'int64\''),
-        new ApiConfigError('WrongInt: anInt64TooLargeDefault: Default value: '
-            '\'9223372036854775808\' not in the range of an \'int64\''),
-        new ApiConfigError('WrongInt: anInt64TooSmallDefault: Default value: '
-            '\'-9223372036854775809\' not in the range of an \'int64\''),
-        new ApiConfigError(
-            'WrongInt: anUInt64TooSmallMin: Min value: \'-1\' not in the range '
-            'of an \'uint64\''),
-        new ApiConfigError('WrongInt: anUInt64TooLargeMax: Max value: '
-            '\'18446744073709551616\' not in the range of an \'uint64\''),
-        new ApiConfigError('WrongInt: anUInt64TooLargeDefault: Default value: '
-            '\'18446744073709551616\' not in the range of an \'uint64\''),
-        new ApiConfigError(
-            'WrongInt: anUInt64TooSmallDefault: Default value: \'-1\' not in '
-            'the range of an \'uint64\'')
       ];
       expect(parser.errors.toString(), expectedErrors.toString());
     });
