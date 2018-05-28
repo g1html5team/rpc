@@ -7,7 +7,7 @@ library rpc.context;
 import 'dart:io';
 
 import 'package:collection/wrappers.dart';
-import 'package:gcloud/service_scope.dart' as ss;
+import 'service_scope.dart' as ss;
 
 import 'config.dart';
 import 'utils.dart';
