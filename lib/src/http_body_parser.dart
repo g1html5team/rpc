@@ -24,9 +24,9 @@ class PostData {
   PostData(this.type, this.body);
 }
 
-BytesBuilder _fillBytesBuilder(BytesBuilder builder, List<int> data) =>
+BytesBuilder _fillBytesBuilder(BytesBuilder builder, dynamic data) =>
     builder..add(data);
-StringBuffer _fillStringBuffer(StringBuffer buffer, String data) =>
+StringBuffer _fillStringBuffer(StringBuffer buffer, dynamic data) =>
     buffer..write(data);
 
 Future<PostData> _asBinary(ParsedHttpApiRequest request) => request.body
@@ -73,12 +73,12 @@ Future<PostData> _asFormData(ParsedHttpApiRequest request) {
       return [multipart.contentDisposition.parameters['name'], data];
     });
   }).fold([],
-          (List<Future> futureList, Future future) => futureList..add(future))
-      .then(Future.wait)
-      .then((List<List> parts) {
+          (List<dynamic> futureList, Future future) => futureList..add(future))
+      .then((dynamic value) => value.wait)
+      .then((FutureOr parts) {
     Map<String, dynamic> map = {};
     // Form input file multiple
-    for (var part in parts) {
+    for (var part in parts as Iterable) {
       if (map[part[0]] != null) {
         if (map[part[0]] is List) map[part[0]].add(part[1]);
         else map[part[0]] = [map[part[0]], part[1]];

@@ -131,7 +131,7 @@ class ApiParser {
   // Scan through all class instance fields and parse the ones annotated
   // with @ApiResource.
   Map<String, ApiConfigResource> _parseResources(InstanceMirror classInstance) {
-    var resources = {};
+    Map<String, ApiConfigResource> resources = {};
 
     // Scan through the class instance's declarations and parse fields annotated
     // with the @ApiResource annotation.
@@ -184,14 +184,14 @@ class ApiParser {
   // Parse a specific instance's methods and return a list of ApiConfigMethod's
   // corresponding to each of the method's annotated with @ApiMethod.
   List<ApiConfigMethod> _parseMethods(InstanceMirror classInstance) {
-    var methods = [];
+    List<ApiConfigMethod> methods = [];
     // Parse all methods annotated with the @ApiMethod annotation on this class
     // instance.
-    classInstance.type.declarations.values.forEach((dm) {
+    classInstance.type.declarations.values.forEach((DeclarationMirror dm) {
       var metadata = _getMetadata(dm, ApiMethod);
       if (metadata == null) return null;
 
-      if (dm is! MethodMirror || !dm.isRegularMethod) {
+      if (dm is! MethodMirror || !(dm as MethodMirror).isRegularMethod) {
         // The @ApiMethod annotation is only supported on regular methods.
         var name = MirrorSystem.getName(dm.simpleName);
         addError('@ApiMethod annotation on non-method declaration: \'$name\'');
@@ -297,7 +297,7 @@ class ApiParser {
   // Parses a method's url path parameters and validates them against the
   // method signature.
   List<ApiParameter> _parsePathParameters(MethodMirror mm, String path) {
-    var pathParams = [];
+    List<ApiParameter> pathParams = [];
     if (path == null) return pathParams;
 
     // Parse the path to get the number and order of the path parameters
@@ -341,7 +341,7 @@ class ApiParser {
   // invocation.
   List<ApiParameter> _parseQueryParameters(
       MethodMirror mm, int queryParamIndex) {
-    var queryParams = [];
+    List<ApiParameter> queryParams = [];
     for (int i = queryParamIndex; i < mm.parameters.length; ++i) {
       var pm = mm.parameters[i];
       var paramName = MirrorSystem.getName(pm.simpleName);
@@ -375,7 +375,7 @@ class ApiParser {
     if (requestParam.isNamed || requestParam.isOptional) {
       addError('Request parameter cannot be optional or named.');
     }
-    var requestType = requestParam.type;
+    TypeMirror requestType = requestParam.type;
 
     // Check if the request type is a List or Map and handle that explicitly.
     if (requestType.originalDeclaration == reflectClass(List)) {
@@ -386,7 +386,7 @@ class ApiParser {
     }
     if (requestType is! ClassMirror ||
         requestType.simpleName == #dynamic ||
-        requestType.isAbstract) {
+        (requestType as ClassMirror).isAbstract) {
       addError('API Method parameter has to be an instantiable class.');
       return null;
     }
@@ -432,7 +432,7 @@ class ApiParser {
     }
     if (returnType is! ClassMirror ||
         returnType.simpleName == #dynamic ||
-        returnType.isAbstract) {
+        (returnType as ClassMirror).isAbstract) {
       addError('API Method return type has to be a instantiable class.');
       return null;
     }
@@ -533,8 +533,8 @@ class ApiParser {
           .where((mm) => mm is MethodMirror && mm.isConstructor);
       if (!methods.isEmpty &&
           methods
-              .where((mm) => (mm.simpleName == schemaClass.simpleName &&
-                  mm.parameters.isEmpty))
+              .where((DeclarationMirror mm) => (mm.simpleName == schemaClass.simpleName &&
+                  (mm as MethodMirror).parameters.isEmpty))
               .isEmpty) {
         addError('Schema \'$name\' must have an unnamed constructor taking no '
             'arguments.');
@@ -653,14 +653,14 @@ class ApiParser {
       }
     }
 
-    var properties = {};
-    schemaClass.declarations.values.forEach((vm) {
+    Map<Symbol, ApiConfigSchemaProperty> properties = {};
+    schemaClass.declarations.values.forEach((DeclarationMirror vm) {
       var metadata = _getMetadata(vm, ApiProperty);
       if (metadata == null) {
         // Generate a metadata with default values
         metadata = new ApiProperty();
       }
-      if (vm is! VariableMirror || vm.isConst || vm.isPrivate || vm.isStatic) {
+      if (vm is! VariableMirror || (vm as VariableMirror).isConst || vm.isPrivate || (vm as VariableMirror).isStatic) {
         // We only serialize non-const, non-static public fields.
         return;
       }
@@ -668,7 +668,7 @@ class ApiParser {
       if (propertyName == null) {
         propertyName = MirrorSystem.getName(vm.simpleName);
       }
-      var property = parseProperty(vm.type, propertyName, metadata, isRequest);
+      var property = parseProperty((vm as VariableMirror).type, propertyName, metadata, isRequest);
       if (property != null) {
         properties[vm.simpleName] = property;
       }

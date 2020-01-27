@@ -41,7 +41,7 @@ class ApiServer {
           if (!request.uri.path.startsWith(_apiPrefix)) {
             await request.drain();
             apiResponse = new HttpApiResponse.error(
-                io.HttpStatus.NOT_IMPLEMENTED,
+                io.HttpStatus.notImplemented,
                 'Invalid request for path: ${request.uri.path}',
                 null,
                 null);

@@ -161,7 +161,7 @@ class GetAPI {
 
   @ApiMethod(path: 'get/response')
   VoidMessage getResponse() {
-    context.responseStatusCode = HttpStatus.FOUND;
+    context.responseStatusCode = HttpStatus.found;
     context.responseHeaders['Location'] = 'http://some-other-url';
     return null;
   }
@@ -321,7 +321,7 @@ main() async {
   group('api-invoke-get', () {
     test('simple', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/simple');
-      expect(response.status, HttpStatus.NO_CONTENT);
+      expect(response.status, HttpStatus.noContent);
       expect(response.body, null);
     });
 
@@ -456,7 +456,7 @@ main() async {
 
     test('get-response', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/response');
-      expect(response.status, HttpStatus.FOUND);
+      expect(response.status, HttpStatus.found);
       expect(
           response.headers['content-type'], 'application/json; charset=utf-8');
       expect(response.headers['location'], 'http://some-other-url');
@@ -505,9 +505,9 @@ main() async {
       final file = _blobFile();
       HttpApiResponse response =
           await _sendRequest('GET', 'get/blob', extraHeaders: {
-        HttpHeaders.IF_MODIFIED_SINCE: formatHttpDate(file.lastModifiedSync())
+        HttpHeaders.ifModifiedSinceHeader: formatHttpDate(file.lastModifiedSync())
       });
-      expect(response.status, HttpStatus.NOT_MODIFIED);
+      expect(response.status, HttpStatus.notModified);
       expect(response.headers[HttpHeaders.contentTypeHeader], null);
       expect(response.headers[HttpHeaders.lastModifiedHeader],
           formatHttpDate(file.lastModifiedSync()));
@@ -556,7 +556,7 @@ main() async {
   group('api-invoke-delete', () {
     test('simple', () async {
       HttpApiResponse response = await _sendRequest('DELETE', 'delete/simple');
-      expect(response.status, HttpStatus.NO_CONTENT);
+      expect(response.status, HttpStatus.noContent);
       expect(response.body, null);
     });
   });

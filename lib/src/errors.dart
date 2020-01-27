@@ -84,7 +84,7 @@ class RpcErrorDetail {
       this.sendReport});
 
   Map<String, String> toJson() {
-    var json = {};
+    Map<String, String> json = new Map<String, String>();
     if (domain != null) json['domain'] = domain;
     if (reason != null) json['reason'] = reason;
     if (message != null) json['message'] = message;

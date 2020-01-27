@@ -22,8 +22,8 @@ const Map<String, dynamic> defaultResponseHeaders = const {
   // We always return json in the response.
   HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8',
   HttpHeaders.cacheControlHeader: 'no-cache, no-store, must-revalidate',
-  HttpHeaders.PRAGMA: 'no-cache',
-  HttpHeaders.EXPIRES: '0',
+  HttpHeaders.pragmaHeader: 'no-cache',
+  HttpHeaders.expiresHeader: '0',
   'access-control-allow-credentials': 'true',
   'access-control-allow-origin': '*',
 };

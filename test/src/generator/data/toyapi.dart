@@ -62,7 +62,7 @@ class ToyApi {
   @ApiMethod(path: 'failing')
   VoidMessage failing() {
     throw new RpcError(
-        HttpStatus.NOT_IMPLEMENTED, 'Not Implemented', 'I like to fail!');
+        HttpStatus.notImplemented, 'Not Implemented', 'I like to fail!');
   }
 
   @ApiMethod(path: 'hello')

@@ -187,7 +187,7 @@ class _ServiceScope {
 
   /// Inserts a new on-scope-exit function to be called once this service scope
   /// ends.
-  void registerOnScopeExitCallback(onScopeExitCallback()) {
+  Object registerOnScopeExitCallback(onScopeExitCallback()) {
     _ensureNotInCleaningState();
     _ensureNotInDestroyingState();
 
@@ -195,6 +195,7 @@ class _ServiceScope {
       _registeredEntries
           .add(new _RegisteredEntry(null, null, onScopeExitCallback));
     }
+    return null;
   }
 
   /// Start a new zone with a forked service scope.

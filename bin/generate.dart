@@ -54,6 +54,7 @@ ArgResults parseArguments(ArgParser parser, List<String> arguments) {
     return parser.parse(arguments);
   } on FormatException catch (e) {
     dieWithUsage('Error parsing arguments:\n${e.message}\n');
+    return null;
   }
 }
 
@@ -274,7 +275,7 @@ class ClientApiGenerator {
       } else if (path.contains('.packages')) {
         // Didn't find .packages so revert to /packages/.
         request.response
-          ..statusCode = HttpStatus.NOT_FOUND
+          ..statusCode = HttpStatus.notFound
           ..close();
       } else {
         request.response

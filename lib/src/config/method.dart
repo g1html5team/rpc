@@ -4,8 +4,6 @@
 
 part of rpc.config;
 
-final _bytesToJson = utf8.decoder.fuse(json.decoder);
-
 class ApiConfigMethod {
   final Symbol symbol;
   final String id;
@@ -237,7 +235,7 @@ class ApiConfigMethod {
 
         if (apiResult is MediaMessage) {
           // Better solution to force cache?
-          context.responseHeaders.remove(HttpHeaders.PRAGMA);
+          context.responseHeaders.remove(HttpHeaders.pragmaHeader);
           if (apiResult.cacheControl != null) {
             context.responseHeaders[HttpHeaders.cacheControlHeader] =
                 apiResult.cacheControl;
@@ -245,13 +243,13 @@ class ApiConfigMethod {
             context.responseHeaders.remove(HttpHeaders.cacheControlHeader);
           }
 
-          if (context.requestHeaders[HttpHeaders.IF_MODIFIED_SINCE] != null) {
+          if (context.requestHeaders[HttpHeaders.ifModifiedSinceHeader] != null) {
             DateTime ifModifiedSince = parseHttpDate(
-                context.requestHeaders[HttpHeaders.IF_MODIFIED_SINCE]);
+                context.requestHeaders[HttpHeaders.ifModifiedSinceHeader]);
             if (ifModifiedSince != null &&
                 !apiResult.updated.isAfter(ifModifiedSince)) {
               context.responseHeaders.remove(HttpHeaders.contentTypeHeader);
-              return new HttpApiResponse(HttpStatus.NOT_MODIFIED,
+              return new HttpApiResponse(HttpStatus.notModified,
                   null, context.responseHeaders);
             }
           }
@@ -261,7 +259,7 @@ class ApiConfigMethod {
         statusCode = HttpStatus.ok;
       } else {
         resultBody = null;
-        statusCode = HttpStatus.NO_CONTENT;
+        statusCode = HttpStatus.noContent;
       }
       // If the api method has set a specific response status code use that
       // instead of the above default based on the result content.
