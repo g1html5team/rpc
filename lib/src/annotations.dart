@@ -78,7 +78,7 @@ class ApiProperty {
   /// Specifies the representation of int and double properties in the backend.
   ///
   /// Possible values for int: 'int32' (default), 'uint32', 'int64', 'uint64'.
-  /// The 64 bit values will be represented as String in the JSON
+  /// The 64 bit values will be represented as String in the json
   /// requests/responses.
   ///
   /// Possible values for double: 'double' (default), 'float'.

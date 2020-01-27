@@ -831,11 +831,11 @@ class ApiParser {
               'with format: \'float\', must be in the range: '
               '[$SMALLEST_FLOAT, $LARGEST_FLOAT]');
         } else if (apiFormat == 'double' &&
-            (metadata.defaultValue < -double.MAX_FINITE ||
-                metadata.defaultValue > double.MAX_FINITE)) {
+            (metadata.defaultValue < -double.maxFinite ||
+                metadata.defaultValue > double.maxFinite)) {
           addError('$propertyName: Default value of: ${metadata.defaultValue} '
               'with format: \'double\', must be in the range: '
-              '[${-double.MAX_FINITE}, ${double.MAX_FINITE}]');
+              '[${-double.maxFinite}, ${double.maxFinite}]');
         }
       }
     }

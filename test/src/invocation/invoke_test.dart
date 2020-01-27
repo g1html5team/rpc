@@ -249,14 +249,14 @@ class PostAPI {
     assert(existingResources != null);
     existingResources[resource] = id;
     // Set the HTTP response's status code to 201 (Created).
-    context.responseStatusCode = HttpStatus.CREATED;
+    context.responseStatusCode = HttpStatus.created;
     return existingResources;
   }
 
   // Method used to test response status code override and response headers.
   @ApiMethod(method: 'POST', path: 'post/response')
   DefaultValueMessage responsePost(DefaultValueMessage message) {
-    context.responseStatusCode = HttpStatus.ACCEPTED;
+    context.responseStatusCode = HttpStatus.accepted;
     context.responseHeaders['Content-type'] = 'contentType1';
     context.responseHeaders['content-Type'] = 'contentType2';
     context.responseHeaders['my-Own-header'] = 'aHeaderValue';
@@ -299,7 +299,7 @@ main() async {
     headers.addAll(extraHeaders);
     var bodyStream;
     if ((method == 'POST' || method == 'PUT') && body != 'empty') {
-      bodyStream = new Stream.fromIterable([UTF8.encode(JSON.encode(body))]);
+      bodyStream = new Stream.fromIterable([utf8.encode(json.encode(body))]);
     } else {
       bodyStream = new Stream.fromIterable([]);
     }
@@ -315,7 +315,7 @@ main() async {
     if (body == null) return null;
     List<List<int>> content = await body.toList();
     assert(content.length == 1);
-    return JSON.decode(UTF8.decode(content.single));
+    return json.decode(utf8.decode(content.single));
   }
 
   group('api-invoke-get', () {
@@ -327,18 +327,18 @@ main() async {
 
     test('throwing', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/throwing');
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(response.exception.toString(),
           'RPC Error with status: 400 and message: No request is good enough!');
     });
 
     test('errors', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/errors');
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(response.exception.toString(),
           'RPC Error with status: 400 and message: This is bad :(');
 
-      // Now check that the returned JSON contains the list of errors
+      // Now check that the returned json contains the list of errors
       var body = await _decodeBody(response.body);
       expect(body['error'].containsKey('errors'), isTrue);
       List<RpcErrorDetail> errors = body['error']['errors'];
@@ -353,7 +353,7 @@ main() async {
 
     test('null', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/null');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status, HttpStatus.internalServerError);
       expect(
           response.exception.toString(),
           'RPC Error with status: 500 and message: Method with non-void return '
@@ -362,24 +362,24 @@ main() async {
 
     test('hello-query', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/hello');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello Ghost'});
       response =
           await _sendRequest('GET', 'get/hello', query: '?name=John');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello John'});
     });
 
     test('hello-query-need-decode-uri', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/hello');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello Ghost'});
       response =
           await _sendRequest('GET', 'get/hello', query: '?name=John%20Cena');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello John Cena'});
     });
@@ -387,7 +387,7 @@ main() async {
     test('hello-path', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'get/hello/John');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello John'});
     });
@@ -395,7 +395,7 @@ main() async {
     test('hello-path-need-decode-uri', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'get/hello/John%20Cena');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'aString': 'Hello John Cena'});
     });
@@ -403,20 +403,20 @@ main() async {
 
     test('minmax', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/minmax/7');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'aBoundedInt': 7});
     });
 
     test('invalid-minmax', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/minmax/11');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status, HttpStatus.internalServerError);
       expect(
           response.exception.toString(),
           'RPC Error with status: 500 and message: Return value \'11\' larger '
           'than maximum value \'10\'');
       response = await _sendRequest('GET', 'get/minmax/-1');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status, HttpStatus.internalServerError);
       expect(
           response.exception.toString(),
           'RPC Error with status: 500 and message: Return value \'-1\' smaller '
@@ -425,7 +425,7 @@ main() async {
 
     test('int32', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/int32/343');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'anInt': 343});
     });
@@ -433,13 +433,13 @@ main() async {
     test('invalid-int32', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'get/int32/0x80000000');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status, HttpStatus.internalServerError);
       expect(
           response.exception.toString(),
           'RPC Error with status: 500 and message: Integer return value: '
           '\'2147483648\' not within the \'int32\' property range.');
       response = await _sendRequest('GET', 'get/int32/-0x80000001');
-      expect(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+      expect(response.status, HttpStatus.internalServerError);
       expect(
           response.exception.toString(),
           'RPC Error with status: 500 and message: Integer return value: '
@@ -449,7 +449,7 @@ main() async {
     test('int64', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'get/int64/0x80000000');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, {'anInt': '2147483648'});
     });
@@ -469,7 +469,7 @@ main() async {
       ];
       HttpApiResponse response =
           await _sendRequest('GET', 'get/withCookies', cookies: cookies);
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       var expectedResult =
           'Received cookies: [my-cookie=cookie-value; HttpOnly, '
@@ -479,10 +479,10 @@ main() async {
 
     test('get-blob-media', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/blob');
-      expect(response.status, HttpStatus.OK);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE], 'image/png');
+      expect(response.status, HttpStatus.ok);
+      expect(response.headers[HttpHeaders.contentTypeHeader], 'image/png');
       final file = _blobFile();
-      expect(response.headers[HttpHeaders.LAST_MODIFIED],
+      expect(response.headers[HttpHeaders.lastModifiedHeader],
           formatHttpDate(file.lastModifiedSync()));
       final bytes = await response.body.toList();
       expect(file.readAsBytesSync(), bytes[0]);
@@ -490,8 +490,8 @@ main() async {
 
     test('get-blob-json', () async {
       HttpApiResponse response = await _sendRequest('GET', 'get/blob?alt=json');
-      expect(response.status, HttpStatus.OK);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE],
+      expect(response.status, HttpStatus.ok);
+      expect(response.headers[HttpHeaders.contentTypeHeader],
           'application/json; charset=utf-8');
       final file = _blobFile();
       final blob = await _decodeBody(response.body);
@@ -508,8 +508,8 @@ main() async {
         HttpHeaders.IF_MODIFIED_SINCE: formatHttpDate(file.lastModifiedSync())
       });
       expect(response.status, HttpStatus.NOT_MODIFIED);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE], null);
-      expect(response.headers[HttpHeaders.LAST_MODIFIED],
+      expect(response.headers[HttpHeaders.contentTypeHeader], null);
+      expect(response.headers[HttpHeaders.lastModifiedHeader],
           formatHttpDate(file.lastModifiedSync()));
       expect(response.body, null);
     });
@@ -517,8 +517,8 @@ main() async {
     test('get-blob-extra', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'get/blob/extra?alt=json');
-      expect(response.status, HttpStatus.OK);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE],
+      expect(response.status, HttpStatus.ok);
+      expect(response.headers[HttpHeaders.contentTypeHeader],
           'application/json; charset=utf-8');
       final file = _blobFile();
       final blob = await _decodeBody(response.body);
@@ -533,8 +533,8 @@ main() async {
     test('get-inherited-child-class-base-included', () async{
       HttpApiResponse response =
       await _sendRequest('GET', 'get/inheritanceChildClassBaseIncluded');
-      expect(response.status, HttpStatus.OK);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE],
+      expect(response.status, HttpStatus.ok);
+      expect(response.headers[HttpHeaders.contentTypeHeader],
           'application/json; charset=utf-8');
       var result = await _decodeBody(response.body);
       expect(result,
@@ -544,8 +544,8 @@ main() async {
     test('get-inherited-child-class-base-excluded', () async{
       HttpApiResponse response =
       await _sendRequest('GET', 'get/inheritanceChildClassBaseExcluded');
-      expect(response.status, HttpStatus.OK);
-      expect(response.headers[HttpHeaders.CONTENT_TYPE],
+      expect(response.status, HttpStatus.ok);
+      expect(response.headers[HttpHeaders.contentTypeHeader],
           'application/json; charset=utf-8');
       var result = await _decodeBody(response.body);
       expect(result, {'stringFromChild': 'From child'});
@@ -565,7 +565,7 @@ main() async {
     test('default', () async {
       HttpApiResponse response =
           await _sendRequest('POST', 'post/identity', body: {});
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, _expectedDefaultResult);
     });
@@ -573,7 +573,7 @@ main() async {
       var body = {'aBoundedInt': 5};
       HttpApiResponse response =
           await _sendRequest('POST', 'post/minmax', body: body);
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var resultBody = await _decodeBody(response.body);
       expect(resultBody, body);
     });
@@ -581,7 +581,7 @@ main() async {
       var body = {'aBoundedInt': 11};
       HttpApiResponse response =
           await _sendRequest('POST', 'post/minmax', body: body);
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(
           response.exception.toString(),
           'RPC Error with status: 400 and message: '
@@ -590,7 +590,7 @@ main() async {
     test('minmax-invalid-type', () async {
       HttpApiResponse response =
           await _sendRequest('POST', 'post/minmax', body: [1, 2]);
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(
           response.exception.toString(),
           'RPC Error with status: 400 and message: '
@@ -600,7 +600,7 @@ main() async {
     test('minmax-no-request', () async {
       HttpApiResponse response =
           await _sendRequest('POST', 'post/minmax', body: 'empty');
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(
           response.exception.toString(),
           'RPC Error with status: 400 and message: '
@@ -610,7 +610,7 @@ main() async {
     test('minmax-null', () async {
       HttpApiResponse response =
           await _sendRequest('POST', 'post/minmax', body: null);
-      expect(response.status, HttpStatus.BAD_REQUEST);
+      expect(response.status, HttpStatus.badRequest);
       expect(
           response.exception.toString(),
           'RPC Error with status: 400 and message: Invalid parameter: '
@@ -620,7 +620,7 @@ main() async {
       var body = [1, 2, 3];
       HttpApiResponse response =
           await _sendRequest('POST', 'post/reverseList', body: body);
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var resultBody = await _decodeBody(response.body);
       expect(resultBody, body.reversed.toList());
     });
@@ -628,12 +628,12 @@ main() async {
       HttpApiResponse response = await _sendRequest(
           'POST', 'post/add/firstResource/size/10',
           body: {});
-      expect(response.status, HttpStatus.CREATED);
+      expect(response.status, HttpStatus.created);
       var resultBody = await _decodeBody(response.body);
       expect(resultBody, {'firstResource': 10});
       response = await _sendRequest('POST', 'post/add/secondResource/size/20',
           body: resultBody);
-      expect(response.status, HttpStatus.CREATED);
+      expect(response.status, HttpStatus.created);
       resultBody = await _decodeBody(response.body);
       expect(resultBody, {'firstResource': 10, 'secondResource': 20});
       expect(
@@ -642,7 +642,7 @@ main() async {
     test('response-modifications', () async {
       HttpApiResponse response =
           await _sendRequest('POST', 'post/response', body: {});
-      expect(response.status, HttpStatus.ACCEPTED);
+      expect(response.status, HttpStatus.accepted);
       expect(response.headers['content-type'], 'contentType2');
       expect(response.headers['my-own-header'], 'aHeaderValue');
     });
@@ -674,7 +674,7 @@ main() async {
     test('default', () async {
       HttpApiResponse response =
           await _sendRequest('PUT', 'put/identity', body: {});
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       expect(result, _expectedDefaultResult);
     });
@@ -684,7 +684,7 @@ main() async {
     test('api-list', () async {
       HttpApiResponse response =
           await _sendRequest('GET', 'apis', api: 'discovery/v1/');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       var expectedResult = {
         'kind': 'discovery#directoryList',
@@ -718,7 +718,7 @@ main() async {
       HttpApiResponse response = await _sendRequest(
           'GET', 'apis/testAPI/v1/rest',
           api: 'discovery/v1/');
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       var result = await _decodeBody(response.body);
       var expectedResult = {
         'kind': 'discovery#restDescription',
@@ -1124,12 +1124,12 @@ main() async {
     test('invalid', () async {
       HttpApiResponse response = await _sendRequest('OPTIONS', 'get/invalid',
           extraHeaders: extraHeaders(['GET']));
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       expect(response.headers['access-control-allow-origin'], '*');
       expect(response.headers['access-control-allow-credentials'], 'true');
       expect(response.headers['access-control-allow-headers'], isNull);
       expect(response.headers['access-control-allow-methods'], isNull);
-      expect(response.headers[HttpHeaders.ALLOW], isNull);
+      expect(response.headers[HttpHeaders.allowHeader], isNull);
     });
 
     test('invalid-all', () {
@@ -1137,12 +1137,12 @@ main() async {
         HttpApiResponse response = await _sendRequest('OPTIONS', 'get/invalid',
             extraHeaders: extraHeaders(['GET', 'DELETE', 'POST', 'PUT'],
                 asString: methodsAsString));
-        expect(response.status, HttpStatus.OK);
+        expect(response.status, HttpStatus.ok);
         expect(response.headers['access-control-allow-origin'], '*');
         expect(response.headers['access-control-allow-credentials'], 'true');
         expect(response.headers['access-control-allow-headers'], isNull);
         expect(response.headers['access-control-allow-methods'], isNull);
-        expect(response.headers[HttpHeaders.ALLOW], isNull);
+        expect(response.headers[HttpHeaders.allowHeader], isNull);
       });
     });
 
@@ -1151,7 +1151,7 @@ main() async {
         HttpApiResponse response = await _sendRequest('OPTIONS', 'get/simple',
             extraHeaders: extraHeaders(['GET', 'POST', 'DELETE', 'PUT'],
                 asString: methodsAsString));
-        expect(response.status, HttpStatus.OK);
+        expect(response.status, HttpStatus.ok);
         expect(response.headers['access-control-allow-origin'], '*');
         expect(response.headers['access-control-allow-credentials'], 'true');
         expect(response.headers['access-control-allow-headers'],
@@ -1159,7 +1159,7 @@ main() async {
         var expectedMethods = methodsAsString ? 'GET' : ['GET'];
         expect(
             response.headers['access-control-allow-methods'], expectedMethods);
-        expect(response.headers[HttpHeaders.ALLOW], expectedMethods);
+        expect(response.headers[HttpHeaders.allowHeader], expectedMethods);
       });
     });
 
@@ -1169,7 +1169,7 @@ main() async {
             'OPTIONS', 'post/identity',
             extraHeaders: extraHeaders(['GET', 'POST', 'DELETE', 'PUT'],
                 asString: methodsAsString));
-        expect(response.status, HttpStatus.OK);
+        expect(response.status, HttpStatus.ok);
         expect(response.headers['access-control-allow-origin'], '*');
         expect(response.headers['access-control-allow-credentials'], 'true');
         expect(response.headers['access-control-allow-headers'],
@@ -1177,16 +1177,16 @@ main() async {
         var expectedMethods = methodsAsString ? 'POST' : ['POST'];
         expect(
             response.headers['access-control-allow-methods'], expectedMethods);
-        expect(response.headers[HttpHeaders.ALLOW], expectedMethods);
+        expect(response.headers[HttpHeaders.allowHeader], expectedMethods);
       });
     });
 
     test('get', () async {
       HttpApiResponse response = await _sendRequest('OPTIONS', 'get/simple',
           extraHeaders: extraHeaders(['GET']));
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       expect(response.headers['access-control-allow-methods'], ['GET']);
-      expect(response.headers[HttpHeaders.ALLOW], ['GET']);
+      expect(response.headers[HttpHeaders.allowHeader], ['GET']);
     });
 
     group('api-invoke-delete', () {
@@ -1194,26 +1194,26 @@ main() async {
         HttpApiResponse response = await _sendRequest(
             'OPTIONS', 'delete/simple',
             extraHeaders: extraHeaders(['DELETE']));
-        expect(response.status, HttpStatus.OK);
+        expect(response.status, HttpStatus.ok);
         expect(response.headers['access-control-allow-methods'], ['DELETE']);
-        expect(response.headers[HttpHeaders.ALLOW], ['DELETE']);
+        expect(response.headers[HttpHeaders.allowHeader], ['DELETE']);
       });
     });
 
     test('post', () async {
       HttpApiResponse response = await _sendRequest('OPTIONS', 'post/identity',
           body: {}, extraHeaders: extraHeaders(['POST']));
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       expect(response.headers['access-control-allow-methods'], ['POST']);
-      expect(response.headers[HttpHeaders.ALLOW], ['POST']);
+      expect(response.headers[HttpHeaders.allowHeader], ['POST']);
     });
 
     test('put', () async {
       HttpApiResponse response = await _sendRequest('OPTIONS', 'put/identity',
           body: {}, extraHeaders: extraHeaders(['PUT']));
-      expect(response.status, HttpStatus.OK);
+      expect(response.status, HttpStatus.ok);
       expect(response.headers['access-control-allow-methods'], ['PUT']);
-      expect(response.headers[HttpHeaders.ALLOW], ['PUT']);
+      expect(response.headers[HttpHeaders.allowHeader], ['PUT']);
     });
   });
 }

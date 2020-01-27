@@ -125,7 +125,7 @@ class ToyApi {
     // Use the invocation context to change the response's status code.
     // Can also be used to pass response headers and look at the HTTP requests
     // headers, cookies, and url.
-    context.responseStatusCode = HttpStatus.CREATED;
+    context.responseStatusCode = HttpStatus.created;
     return new ToyResponse()..result = 'Hello ${name} of age ${request.age}!';
   }
 

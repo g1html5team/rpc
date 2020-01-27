@@ -4,7 +4,7 @@
 
 part of rpc.config;
 
-final _bytesToJson = UTF8.decoder.fuse(JSON.decoder);
+final _bytesToJson = utf8.decoder.fuse(json.decoder);
 
 class ApiConfigMethod {
   final Symbol symbol;
@@ -220,17 +220,17 @@ class ApiConfigMethod {
             rpcLogger.warning(
                 'Method $name returned MediaMessage without contentType');
           } else {
-            context.responseHeaders[HttpHeaders.CONTENT_TYPE] =
+            context.responseHeaders[HttpHeaders.contentTypeHeader] =
                 apiResult.contentType;
           }
           if (apiResult.updated != null) context.responseHeaders[
-              HttpHeaders.LAST_MODIFIED] = formatHttpDate(apiResult.updated);
+              HttpHeaders.lastModifiedHeader] = formatHttpDate(apiResult.updated);
           if (apiResult.contentEncoding != null) context.responseHeaders[
-              HttpHeaders.CONTENT_ENCODING] = apiResult.contentEncoding;
+              HttpHeaders.contentEncodingHeader] = apiResult.contentEncoding;
           if (apiResult.contentLanguage != null) context.responseHeaders[
-              HttpHeaders.CONTENT_LANGUAGE] = apiResult.contentLanguage;
+              HttpHeaders.contentLanguageHeader] = apiResult.contentLanguage;
           if (apiResult.md5Hash != null) {
-            context.responseHeaders[HttpHeaders.CONTENT_MD5] =
+            context.responseHeaders[HttpHeaders.contentMD5Header] =
                 apiResult.md5Hash;
           }
         }
@@ -239,10 +239,10 @@ class ApiConfigMethod {
           // Better solution to force cache?
           context.responseHeaders.remove(HttpHeaders.PRAGMA);
           if (apiResult.cacheControl != null) {
-            context.responseHeaders[HttpHeaders.CACHE_CONTROL] =
+            context.responseHeaders[HttpHeaders.cacheControlHeader] =
                 apiResult.cacheControl;
           } else {
-            context.responseHeaders.remove(HttpHeaders.CACHE_CONTROL);
+            context.responseHeaders.remove(HttpHeaders.cacheControlHeader);
           }
 
           if (context.requestHeaders[HttpHeaders.IF_MODIFIED_SINCE] != null) {
@@ -250,7 +250,7 @@ class ApiConfigMethod {
                 context.requestHeaders[HttpHeaders.IF_MODIFIED_SINCE]);
             if (ifModifiedSince != null &&
                 !apiResult.updated.isAfter(ifModifiedSince)) {
-              context.responseHeaders.remove(HttpHeaders.CONTENT_TYPE);
+              context.responseHeaders.remove(HttpHeaders.contentTypeHeader);
               return new HttpApiResponse(HttpStatus.NOT_MODIFIED,
                   null, context.responseHeaders);
             }
@@ -258,7 +258,7 @@ class ApiConfigMethod {
         }
 
         resultBody = new Stream.fromIterable([resultAsBytes]);
-        statusCode = HttpStatus.OK;
+        statusCode = HttpStatus.ok;
       } else {
         resultBody = null;
         statusCode = HttpStatus.NO_CONTENT;

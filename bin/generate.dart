@@ -278,7 +278,7 @@ class ClientApiGenerator {
           ..close();
       } else {
         request.response
-          ..add(UTF8.encode(generatorSource))
+          ..add(utf8.encode(generatorSource))
           ..close();
       }
     }
@@ -360,7 +360,7 @@ class ClientApiGenerator {
         // Get the Discovery Document (We cannot use the RestDescription from
         // the parsed api below since it is a different RestDescription than the
         // one used by the discoveryapis_generator package. Instead we encode it
-        // as a JSON string and decode it in the discoveryapis_generator
+        // as a json string and decode it in the discoveryapis_generator
         // package.
         String document = await _generateDocument(api, apiPort, apiPrefix);
 
@@ -411,7 +411,7 @@ class ClientApiGenerator {
       var request =
           new HttpApiRequest('GET', uri, {}, new Stream.fromIterable([]));
       HttpApiResponse response = await server.handleHttpApiRequest(request);
-      return response.body.transform(UTF8.decoder).join('');
+      return response.body.transform(utf8.decoder).join('');
     }
 
     // Checks if the DeclarationMirror is a class and annotated with @ApiClass.

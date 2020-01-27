@@ -36,7 +36,7 @@ Future<PostData> _asBinary(ParsedHttpApiRequest request) => request.body
 Future<PostData> _asText(ParsedHttpApiRequest request) {
   final String charset = request.contentType.charset;
   final Encoding encoding =
-      charset != null ? Encoding.getByName(charset) : UTF8;
+      charset != null ? Encoding.getByName(charset) : utf8;
   return request.body
       .transform(encoding.decoder)
       .fold(new StringBuffer(), _fillStringBuffer)
@@ -100,12 +100,12 @@ Future<PostData> parseRequestBody(ParsedHttpApiRequest request) {
       switch (contentType.subType) {
         case "json":
           return _asText(request).then(
-              (PostData body) => new PostData('json', JSON.decode(body.body)));
+              (PostData body) => new PostData('json', json.decode(body.body)));
 
         case "x-www-form-urlencoded":
           return _asText(request).then((PostData body) {
             Map<String, String> map =
-                Uri.splitQueryString(body.body, encoding: UTF8);
+                Uri.splitQueryString(body.body, encoding: utf8);
             return new PostData('form', new Map.from(map));
           });
 
@@ -166,7 +166,7 @@ class _HttpMultipartFormData extends Stream {
     if (disposition == null) throw new HttpException(
         "Mime Multipart doesn't contain a Content-Disposition header value");
     return new _HttpMultipartFormData(
-        type, disposition, encoding, multipart, UTF8);
+        type, disposition, encoding, multipart, utf8);
   }
 
   _HttpMultipartFormData(

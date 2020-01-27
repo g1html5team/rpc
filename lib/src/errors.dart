@@ -43,7 +43,7 @@ class ApplicationError extends RpcError {
 /// information.
 /// They will be sent back to the client in the `errors` field.
 ///
-/// This follows the Google JSON style guide:
+/// This follows the Google json style guide:
 /// http://google-styleguide.googlecode.com/svn/trunk/jsoncstyleguide.xml?showone=error#error.errors
 class RpcErrorDetail {
   /// Unique identifier for the service raising this error. This helps
